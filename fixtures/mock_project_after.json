@@ -1,0 +1,356 @@
+{
+  "id": "6824f881-ffbc-55c1-81e4-41e7b1852692",
+  "name": "sample_patient_card_project",
+  "project_start_date": "2026-09-07",
+  "revision": 2,
+  "tasks": [
+    {
+      "id": "087451de-30db-580d-9b74-d3cef30b6f0b",
+      "name": "Сбор и анализ требований к карточке пациента и расписанию врача",
+      "description": "Описать сценарии врача, структуру карточки пациента, лечебный план, историю приёмов и запись на следующий приём",
+      "assignee": "Анна П",
+      "duration_workdays": 5,
+      "planned_effort_hours": 40,
+      "predecessor_ids": [],
+      "successor_ids": [
+        "390f17ed-7895-58b8-9731-d31ce6601db3"
+      ],
+      "start_not_before": null,
+      "start_date": "2026-09-07",
+      "end_date": "2026-09-11",
+      "display_order": 1,
+      "created_source": "import"
+    },
+    {
+      "id": "390f17ed-7895-58b8-9731-d31ce6601db3",
+      "name": "Согласование требований к карточке пациента и расписанию врача",
+      "description": "Провести бизнес-согласование состава функционала и зафиксировать принятые решения",
+      "assignee": "Анна П",
+      "duration_workdays": 5,
+      "planned_effort_hours": 40,
+      "predecessor_ids": [
+        "087451de-30db-580d-9b74-d3cef30b6f0b"
+      ],
+      "successor_ids": [
+        "765e1514-c43b-5182-b4d6-772660830e99",
+        "b1f40931-846e-586e-84f5-89f28aa1a063"
+      ],
+      "start_not_before": null,
+      "start_date": "2026-09-14",
+      "end_date": "2026-09-18",
+      "display_order": 2,
+      "created_source": "import"
+    },
+    {
+      "id": "765e1514-c43b-5182-b4d6-772660830e99",
+      "name": "Проектирование UX-сценариев карточки пациента",
+      "description": "Спроектировать пользовательские сценарии работы врача с карточкой пациента",
+      "assignee": "Елена",
+      "duration_workdays": 4,
+      "planned_effort_hours": 32,
+      "predecessor_ids": [
+        "390f17ed-7895-58b8-9731-d31ce6601db3"
+      ],
+      "successor_ids": [
+        "b0bb55f9-29ae-55e3-a694-736232d6bcb7"
+      ],
+      "start_not_before": null,
+      "start_date": "2026-09-21",
+      "end_date": "2026-09-24",
+      "display_order": 3,
+      "created_source": "import"
+    },
+    {
+      "id": "b0bb55f9-29ae-55e3-a694-736232d6bcb7",
+      "name": "Визуальный дизайн карточки пациента",
+      "description": "Подготовить детальные макеты карточки пациента и связанных состояний",
+      "assignee": "Елена",
+      "duration_workdays": 4,
+      "planned_effort_hours": 32,
+      "predecessor_ids": [
+        "765e1514-c43b-5182-b4d6-772660830e99"
+      ],
+      "successor_ids": [
+        "08941115-6449-5d06-8a61-e9a7beb59209"
+      ],
+      "start_not_before": null,
+      "start_date": "2026-09-25",
+      "end_date": "2026-09-30",
+      "display_order": 4,
+      "created_source": "import"
+    },
+    {
+      "id": "08941115-6449-5d06-8a61-e9a7beb59209",
+      "name": "Согласование дизайна карточки пациента",
+      "description": "Провести бизнес-согласование UX/UI решения и зафиксировать правки",
+      "assignee": "Анна П",
+      "duration_workdays": 2,
+      "planned_effort_hours": 16,
+      "predecessor_ids": [
+        "b0bb55f9-29ae-55e3-a694-736232d6bcb7"
+      ],
+      "successor_ids": [
+        "e754461a-c34b-5042-ad52-c9ddf4b0ec41",
+        "08f53915-9995-5086-a67f-3882d6d2e4d8"
+      ],
+      "start_not_before": null,
+      "start_date": "2026-10-01",
+      "end_date": "2026-10-02",
+      "display_order": 5,
+      "created_source": "import"
+    },
+    {
+      "id": "b1f40931-846e-586e-84f5-89f28aa1a063",
+      "name": "Проектирование API и модели данных",
+      "description": "Определить backend-модель пациента, лечебного плана, истории приёмов и расписания",
+      "assignee": "Василий",
+      "duration_workdays": 3,
+      "planned_effort_hours": 24,
+      "predecessor_ids": [
+        "390f17ed-7895-58b8-9731-d31ce6601db3"
+      ],
+      "successor_ids": [
+        "e754461a-c34b-5042-ad52-c9ddf4b0ec41"
+      ],
+      "start_not_before": null,
+      "start_date": "2026-09-21",
+      "end_date": "2026-09-23",
+      "display_order": 6,
+      "created_source": "import"
+    },
+    {
+      "id": "e754461a-c34b-5042-ad52-c9ddf4b0ec41",
+      "name": "Backend-разработка карточки пациента",
+      "description": "Реализовать API и backend-логику карточки пациента",
+      "assignee": "Василий",
+      "duration_workdays": 8,
+      "planned_effort_hours": 64,
+      "predecessor_ids": [
+        "08941115-6449-5d06-8a61-e9a7beb59209",
+        "b1f40931-846e-586e-84f5-89f28aa1a063"
+      ],
+      "successor_ids": [
+        "74b20473-5e7b-51a7-a2a0-801302b4eea5"
+      ],
+      "start_not_before": null,
+      "start_date": "2026-10-05",
+      "end_date": "2026-10-14",
+      "display_order": 7,
+      "created_source": "import"
+    },
+    {
+      "id": "08f53915-9995-5086-a67f-3882d6d2e4d8",
+      "name": "Frontend-разработка карточки пациента",
+      "description": "Реализовать интерфейс карточки пациента по согласованным макетам",
+      "assignee": "Дмитрий",
+      "duration_workdays": 8,
+      "planned_effort_hours": 64,
+      "predecessor_ids": [
+        "08941115-6449-5d06-8a61-e9a7beb59209"
+      ],
+      "successor_ids": [
+        "74b20473-5e7b-51a7-a2a0-801302b4eea5"
+      ],
+      "start_not_before": null,
+      "start_date": "2026-10-05",
+      "end_date": "2026-10-14",
+      "display_order": 8,
+      "created_source": "import"
+    },
+    {
+      "id": "74b20473-5e7b-51a7-a2a0-801302b4eea5",
+      "name": "Интеграция карточки пациента",
+      "description": "Подключить frontend к API и проверить основные интеграционные сценарии",
+      "assignee": "Дмитрий",
+      "duration_workdays": 3,
+      "planned_effort_hours": 24,
+      "predecessor_ids": [
+        "e754461a-c34b-5042-ad52-c9ddf4b0ec41",
+        "08f53915-9995-5086-a67f-3882d6d2e4d8"
+      ],
+      "successor_ids": [
+        "2a88c8dd-0bfd-5e4e-8f1c-0b0058a6b3d7"
+      ],
+      "start_not_before": null,
+      "start_date": "2026-10-15",
+      "end_date": "2026-10-19",
+      "display_order": 9,
+      "created_source": "import"
+    },
+    {
+      "id": "2a88c8dd-0bfd-5e4e-8f1c-0b0058a6b3d7",
+      "name": "Согласование результата разработки",
+      "description": "Провести бизнес-проверку реализованной карточки пациента и зафиксировать необходимые изменения",
+      "assignee": "Анна П",
+      "duration_workdays": 2,
+      "planned_effort_hours": 16,
+      "predecessor_ids": [
+        "74b20473-5e7b-51a7-a2a0-801302b4eea5"
+      ],
+      "successor_ids": [
+        "3f152647-fd06-5a8f-9429-96de0bb7e172",
+        "31a2909f-4b1e-5cf3-84dc-723a70e02f30"
+      ],
+      "start_not_before": null,
+      "start_date": "2026-10-20",
+      "end_date": "2026-10-21",
+      "display_order": 10,
+      "created_source": "import"
+    },
+    {
+      "id": "3f152647-fd06-5a8f-9429-96de0bb7e172",
+      "name": "Правки backend по итогам согласования",
+      "description": "Внести backend-правки после бизнес-согласования результата разработки",
+      "assignee": "Василий",
+      "duration_workdays": 2,
+      "planned_effort_hours": 16,
+      "predecessor_ids": [
+        "2a88c8dd-0bfd-5e4e-8f1c-0b0058a6b3d7"
+      ],
+      "successor_ids": [
+        "07e60bee-303e-5d00-bd18-544a4edfac90"
+      ],
+      "start_not_before": null,
+      "start_date": "2026-10-22",
+      "end_date": "2026-10-23",
+      "display_order": 11,
+      "created_source": "agent"
+    },
+    {
+      "id": "31a2909f-4b1e-5cf3-84dc-723a70e02f30",
+      "name": "Правки frontend по итогам согласования",
+      "description": "Внести frontend-правки после бизнес-согласования результата разработки",
+      "assignee": "Дмитрий",
+      "duration_workdays": 3,
+      "planned_effort_hours": 24,
+      "predecessor_ids": [
+        "2a88c8dd-0bfd-5e4e-8f1c-0b0058a6b3d7"
+      ],
+      "successor_ids": [
+        "07e60bee-303e-5d00-bd18-544a4edfac90"
+      ],
+      "start_not_before": null,
+      "start_date": "2026-10-22",
+      "end_date": "2026-10-26",
+      "display_order": 12,
+      "created_source": "agent"
+    },
+    {
+      "id": "07e60bee-303e-5d00-bd18-544a4edfac90",
+      "name": "QA-тестирование карточки пациента",
+      "description": "Проверить функциональные и негативные сценарии карточки пациента",
+      "assignee": "Анна С",
+      "duration_workdays": 4,
+      "planned_effort_hours": 32,
+      "predecessor_ids": [
+        "3f152647-fd06-5a8f-9429-96de0bb7e172",
+        "31a2909f-4b1e-5cf3-84dc-723a70e02f30"
+      ],
+      "successor_ids": [
+        "e6a5644e-0f80-5390-93fd-75771e336fdf",
+        "2503261f-f902-529d-ab32-9b1b0046a9aa"
+      ],
+      "start_not_before": null,
+      "start_date": "2026-10-27",
+      "end_date": "2026-10-30",
+      "display_order": 13,
+      "created_source": "import"
+    },
+    {
+      "id": "e6a5644e-0f80-5390-93fd-75771e336fdf",
+      "name": "Исправление backend-дефектов",
+      "description": "Исправить backend-дефекты, обнаруженные в ходе QA",
+      "assignee": "Василий",
+      "duration_workdays": 2,
+      "planned_effort_hours": 16,
+      "predecessor_ids": [
+        "07e60bee-303e-5d00-bd18-544a4edfac90"
+      ],
+      "successor_ids": [
+        "6a340bc6-4f85-5a04-aa47-a3aec7ab0069"
+      ],
+      "start_not_before": null,
+      "start_date": "2026-11-02",
+      "end_date": "2026-11-03",
+      "display_order": 14,
+      "created_source": "import"
+    },
+    {
+      "id": "2503261f-f902-529d-ab32-9b1b0046a9aa",
+      "name": "Исправление frontend-дефектов",
+      "description": "Исправить frontend-дефекты, обнаруженные в ходе QA",
+      "assignee": "Дмитрий",
+      "duration_workdays": 2,
+      "planned_effort_hours": 16,
+      "predecessor_ids": [
+        "07e60bee-303e-5d00-bd18-544a4edfac90"
+      ],
+      "successor_ids": [
+        "6a340bc6-4f85-5a04-aa47-a3aec7ab0069"
+      ],
+      "start_not_before": null,
+      "start_date": "2026-11-02",
+      "end_date": "2026-11-03",
+      "display_order": 15,
+      "created_source": "import"
+    },
+    {
+      "id": "6a340bc6-4f85-5a04-aa47-a3aec7ab0069",
+      "name": "Регрессионное тестирование",
+      "description": "Повторно проверить исправления и основные сценарии карточки пациента",
+      "assignee": "Анна С",
+      "duration_workdays": 2,
+      "planned_effort_hours": 16,
+      "predecessor_ids": [
+        "e6a5644e-0f80-5390-93fd-75771e336fdf",
+        "2503261f-f902-529d-ab32-9b1b0046a9aa"
+      ],
+      "successor_ids": [
+        "0abac446-0cc6-5e1e-a211-3cc4fe4c8e40"
+      ],
+      "start_not_before": null,
+      "start_date": "2026-11-04",
+      "end_date": "2026-11-05",
+      "display_order": 16,
+      "created_source": "import"
+    },
+    {
+      "id": "0abac446-0cc6-5e1e-a211-3cc4fe4c8e40",
+      "name": "Подготовка релиза",
+      "description": "Проверить готовность функционала, документации и релизного плана",
+      "assignee": "Анна П",
+      "duration_workdays": 1,
+      "planned_effort_hours": 8,
+      "predecessor_ids": [
+        "6a340bc6-4f85-5a04-aa47-a3aec7ab0069"
+      ],
+      "successor_ids": [
+        "1c3f24a7-3bd3-54cc-836d-8870531f6dca"
+      ],
+      "start_not_before": null,
+      "start_date": "2026-11-06",
+      "end_date": "2026-11-06",
+      "display_order": 17,
+      "created_source": "import"
+    },
+    {
+      "id": "1c3f24a7-3bd3-54cc-836d-8870531f6dca",
+      "name": "Релиз карточки пациента",
+      "description": "Развернуть функциональность и выполнить техническую проверку после релиза",
+      "assignee": "Василий",
+      "duration_workdays": 1,
+      "planned_effort_hours": 8,
+      "predecessor_ids": [
+        "0abac446-0cc6-5e1e-a211-3cc4fe4c8e40"
+      ],
+      "successor_ids": [],
+      "start_not_before": null,
+      "start_date": "2026-11-09",
+      "end_date": "2026-11-09",
+      "display_order": 18,
+      "created_source": "import"
+    }
+  ],
+  "created_at": "2026-08-23T16:00:00Z",
+  "updated_at": "2026-08-23T16:05:00Z"
+}
