@@ -1,0 +1,44 @@
+.anchor {
+  display: contents;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: var(--z-tooltip);
+  max-width: 320px;
+  padding: var(--space-4) var(--space-6);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-inverse);
+  color: var(--color-text-inverse);
+  font-size: var(--text-small-size);
+  line-height: var(--text-small-line);
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+  animation: fade var(--duration-fast) var(--ease-out);
+}
+
+.rich {
+  max-width: 340px;
+  padding: var(--space-6) var(--space-7);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-md);
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tooltip {
+    animation: none;
+  }
+}

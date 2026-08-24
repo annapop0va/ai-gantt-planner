@@ -1,0 +1,125 @@
+.metric {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-3) var(--space-7) var(--space-3) 0;
+  min-width: 0;
+}
+
+.metric + .metric {
+  padding-left: var(--space-7);
+  border-left: 1px solid var(--color-border);
+}
+
+.glyph {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  flex: none;
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-sunken);
+  color: var(--color-text-secondary);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.label {
+  font-size: var(--text-micro-size);
+  line-height: var(--text-micro-line);
+  font-weight: var(--text-label-weight);
+  letter-spacing: var(--text-label-tracking);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.valueRow {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.value {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  letter-spacing: -0.008em;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.previous {
+  font-size: var(--text-small-size);
+  line-height: 20px;
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.arrow {
+  color: var(--color-text-muted);
+  align-self: center;
+  flex: none;
+}
+
+/* ---------------------------------------------------------------------------
+   Emphasised state — used for the release date after an AI change. This is the
+   number a delivery manager cares about most, so it gets a tinted plate, the
+   old value struck through beside the new one, and an explicit delta pill.
+   ------------------------------------------------------------------------- */
+
+.changed {
+  padding: var(--space-3) var(--space-6);
+  margin: -1px 0;
+  border: 1px solid var(--color-change-direct-border);
+  border-radius: var(--radius-md);
+  background: var(--color-change-direct-soft);
+}
+
+.changed + .metric,
+.metric + .changed {
+  border-left: none;
+}
+
+.changed .glyph {
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--color-change-direct);
+}
+
+.changed .label {
+  color: var(--color-change-direct);
+}
+
+.changed .value {
+  color: var(--color-change-direct);
+}
+
+.changed .arrow {
+  color: var(--color-change-direct);
+}
+
+.delta {
+  display: inline-flex;
+  align-items: center;
+  height: 18px;
+  padding: 0 var(--space-4);
+  margin-left: var(--space-2);
+  border-radius: var(--radius-xs);
+  background: var(--color-change-direct);
+  color: #fff;
+  font-size: var(--text-micro-size);
+  line-height: var(--text-micro-line);
+  font-weight: 600;
+  white-space: nowrap;
+  align-self: center;
+}

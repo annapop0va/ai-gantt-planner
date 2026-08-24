@@ -1,0 +1,575 @@
+.gantt {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  flex: 1;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+/* ---------------------------------------------------------------------------
+   Legend — only present while an AI change set is active.
+   ------------------------------------------------------------------------- */
+
+.legend {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-4) var(--space-6);
+  padding: var(--space-5) var(--space-7);
+  border-bottom: 1px solid var(--color-border);
+  background: var(--color-surface-subtle);
+}
+
+.legendTitle {
+  font-size: var(--text-micro-size);
+  line-height: var(--text-micro-line);
+  font-weight: var(--text-label-weight);
+  letter-spacing: var(--text-label-tracking);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.legendItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-small-size);
+  line-height: var(--text-small-line);
+  color: var(--color-text-secondary);
+}
+
+.legendCount {
+  font-weight: 600;
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.legendSwatch {
+  width: 14px;
+  height: 10px;
+  flex: none;
+  border-radius: 2px;
+}
+
+.swatchDirect {
+  background: var(--color-change-direct-bar);
+  box-shadow: inset 3px 0 0 var(--color-change-direct);
+}
+
+.swatchCreated {
+  background: var(--color-change-created-bar);
+  box-shadow: inset 3px 0 0 var(--color-change-created);
+}
+
+.swatchDerived {
+  background: var(--color-change-derived-bar);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.55) 0 2px,
+    transparent 2px 4px
+  );
+}
+
+.legendLine {
+  width: 16px;
+  height: 0;
+  flex: none;
+  border-top: 1.5px solid var(--color-change-created);
+}
+
+.legendLineRemoved {
+  border-top: 1.5px dashed var(--color-text-muted);
+}
+
+.legendSpacer {
+  flex: 1;
+}
+
+.legendReset {
+  font-size: var(--text-small-size);
+}
+
+/* ---------------------------------------------------------------------------
+   Scroll canvas
+   The whole chart is one scroll container. The header sticks to the top and the
+   task table sticks to the left, which is what lets a wide timeline scroll
+   horizontally while the task names stay readable.
+   ------------------------------------------------------------------------- */
+
+.scroller {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  background: var(--color-surface);
+}
+
+.canvas {
+  display: flex;
+  flex-direction: column;
+  width: max-content;
+  min-width: 100%;
+}
+
+.headerRow,
+.bodyRow {
+  display: flex;
+  align-items: stretch;
+}
+
+.headerRow {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+}
+
+.tableCol {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  flex: none;
+  width: var(--gantt-table-width);
+  background: var(--color-surface);
+  border-right: 1px solid var(--color-border);
+}
+
+.headerRow .tableCol {
+  z-index: 5;
+}
+
+.timelineCol {
+  flex: none;
+  position: relative;
+}
+
+/* ---------------------------------------------------------------------------
+   Header
+   ------------------------------------------------------------------------- */
+
+.tableHead,
+.tableRow {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) 84px 88px;
+  align-items: center;
+  gap: var(--space-4);
+  padding: 0 var(--space-6) 0 var(--space-7);
+}
+
+.tableHead {
+  height: var(--gantt-header-height);
+  align-items: end;
+  padding-bottom: var(--space-4);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.headCell {
+  font-size: var(--text-micro-size);
+  line-height: var(--text-micro-line);
+  font-weight: var(--text-label-weight);
+  letter-spacing: var(--text-label-tracking);
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.headRight {
+  text-align: right;
+}
+
+.timelineHead {
+  height: var(--gantt-header-height);
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.monthRow {
+  display: flex;
+  height: 22px;
+  border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.month {
+  flex: none;
+  display: flex;
+  align-items: center;
+  padding-left: var(--space-4);
+  font-size: var(--text-micro-size);
+  line-height: var(--text-micro-line);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  border-left: 1px solid var(--color-border-subtle);
+}
+
+.month:first-child {
+  border-left: none;
+}
+
+.dayRow {
+  display: flex;
+  height: 31px;
+}
+
+.day {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  width: var(--gantt-day-width);
+}
+
+.weekStart {
+  border-left: 1px solid var(--color-grid-week);
+}
+
+.dayNumber {
+  font-size: 11px;
+  line-height: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.dayName {
+  font-size: 9px;
+  line-height: 11px;
+  color: var(--color-text-muted);
+}
+
+.weekStart .dayNumber {
+  color: var(--color-text-primary);
+}
+
+/* ---------------------------------------------------------------------------
+   Task table body
+   ------------------------------------------------------------------------- */
+
+.tableBody {
+  background: var(--color-surface);
+}
+
+.tableRow {
+  height: var(--gantt-row-height);
+  border-bottom: 1px solid var(--color-grid-line);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.tableRow:hover,
+.rowHovered {
+  background: var(--color-surface-hover);
+}
+
+.rowSelected,
+.rowSelected:hover {
+  background: var(--color-accent-soft);
+}
+
+.marker {
+  display: flex;
+  justify-content: center;
+}
+
+.taskName {
+  font-size: var(--text-table-size);
+  line-height: var(--text-table-line);
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rowSelected .taskName {
+  font-weight: 500;
+}
+
+.assignee {
+  font-size: var(--text-table-size);
+  line-height: var(--text-table-line);
+  color: var(--color-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.assigneeEmpty {
+  color: var(--color-text-muted);
+}
+
+.duration {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  font-size: var(--text-table-size);
+  line-height: var(--text-table-line);
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.durationHours {
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+/* Hours are supporting detail — the first thing to drop when space is short. */
+@media (max-width: 1279px) {
+  .durationHours {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Timeline body
+   ------------------------------------------------------------------------- */
+
+.timelineBody {
+  position: relative;
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      var(--color-grid-week) 0 1px,
+      transparent 1px calc(var(--gantt-day-width) * 5)
+    ),
+    repeating-linear-gradient(
+      to right,
+      var(--color-grid-line) 0 1px,
+      transparent 1px var(--gantt-day-width)
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0 calc(var(--gantt-row-height) - 1px),
+      var(--color-grid-line) calc(var(--gantt-row-height) - 1px) var(--gantt-row-height)
+    );
+}
+
+.timelineRow {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--gantt-row-height);
+  pointer-events: none;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+/* Translucent so the day grid stays visible beneath the highlight. */
+.timelineRowHovered {
+  background: rgba(47, 95, 224, 0.05);
+}
+
+.timelineRowSelected,
+.timelineRowSelected.timelineRowHovered {
+  background: rgba(47, 95, 224, 0.09);
+}
+
+.links {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.linkPath {
+  fill: none;
+  stroke: var(--color-link);
+  stroke-width: 1.25;
+}
+
+.linkHead {
+  fill: var(--color-link);
+}
+
+.linkActive .linkPath {
+  stroke: var(--color-link-strong);
+  stroke-width: 1.5;
+}
+
+.linkActive .linkHead {
+  fill: var(--color-link-strong);
+}
+
+.linkAdded .linkPath {
+  stroke: var(--color-change-created);
+  stroke-width: 1.75;
+}
+
+.linkAdded .linkHead {
+  fill: var(--color-change-created);
+}
+
+.linkRemoved .linkPath {
+  stroke: var(--color-text-muted);
+  stroke-width: 1.25;
+  stroke-dasharray: 3 3;
+  opacity: 0.6;
+}
+
+.linkRemoved .linkHead {
+  fill: var(--color-text-muted);
+  opacity: 0.6;
+}
+
+/* --- bars ---------------------------------------------------------------- */
+
+.ghost {
+  position: absolute;
+  height: var(--gantt-bar-height);
+  border: 1px dashed var(--color-bar-ghost);
+  border-radius: 3px;
+  background: transparent;
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.bar {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  height: var(--gantt-bar-height);
+  padding: 0 var(--space-3);
+  border-radius: 3px;
+  background: var(--color-bar);
+  color: #fff;
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    filter var(--duration-fast) var(--ease-out);
+}
+
+.bar:hover {
+  background: var(--color-bar-hover);
+}
+
+.barSelected {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1.5px;
+}
+
+.barGlyph {
+  display: grid;
+  place-items: center;
+  flex: none;
+  opacity: 0.95;
+}
+
+.barDirect {
+  background: var(--color-change-direct-bar);
+  box-shadow: inset 3px 0 0 var(--color-change-direct);
+}
+
+.barDirect:hover {
+  background: var(--color-change-direct-bar-hover);
+}
+
+.barCreated {
+  background: var(--color-change-created-bar);
+  box-shadow: inset 3px 0 0 var(--color-change-created);
+}
+
+.barCreated:hover {
+  background: var(--color-change-created-bar-hover);
+}
+
+/* Derived bars carry a hatch so they are separable from the other two without
+   relying on hue alone. */
+.barDerived {
+  background: var(--color-change-derived-bar);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.5) 0 2px,
+    transparent 2px 5px
+  );
+}
+
+.barDerived:hover {
+  background-color: var(--color-change-derived-bar-hover);
+}
+
+/* ---------------------------------------------------------------------------
+   Tooltip content
+   ------------------------------------------------------------------------- */
+
+.tipTitle {
+  font-size: var(--text-small-size);
+  line-height: 17px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-4);
+  overflow-wrap: anywhere;
+}
+
+.tipGrid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--space-2) var(--space-6);
+  font-size: 12px;
+  line-height: 17px;
+}
+
+.tipKey {
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.tipValue {
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.tipBadge {
+  margin-top: var(--space-5);
+  display: flex;
+}
+
+.tipHint {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border-subtle);
+  font-size: 11px;
+  line-height: 15px;
+  color: var(--color-text-muted);
+}
+
+/* ---------------------------------------------------------------------------
+   Responsive table width
+   ------------------------------------------------------------------------- */
+
+@media (min-width: 1440px) {
+  .gantt {
+    --gantt-table-width: 452px;
+  }
+}
+
+@media (max-width: 1439px) {
+  .gantt {
+    --gantt-table-width: 408px;
+  }
+}
+
+@media (max-width: 1179px) {
+  .gantt {
+    --gantt-table-width: 340px;
+  }
+
+  .tableHead,
+  .tableRow {
+    grid-template-columns: 20px minmax(0, 1fr) 72px 58px;
+    padding: 0 var(--space-5) 0 var(--space-6);
+    gap: var(--space-3);
+  }
+}

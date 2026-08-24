@@ -1,0 +1,213 @@
+/* =============================================================================
+   PlanPilot — design tokens
+   Single light theme. Every colour, size and motion value in the product is
+   declared here; feature CSS must never hardcode a raw hex value.
+   ============================================================================= */
+
+:root {
+  /* ---------------------------------------------------------------------------
+     Surfaces & structure
+     A near-white page with pure-white working surfaces. The page tint exists so
+     that panels, the Gantt grid and the chat column read as separate planes
+     without needing shadows.
+     ------------------------------------------------------------------------- */
+  --color-background: #f6f7f9;
+  --color-surface: #ffffff;
+  --color-surface-subtle: #fbfbfc;
+  --color-surface-sunken: #f2f3f6;
+  --color-surface-hover: #f4f5f7;
+  --color-surface-active: #ebedf1;
+  --color-surface-inverse: #1a1d21;
+
+  --color-border: #e5e7eb;
+  --color-border-subtle: #eef0f2;
+  --color-border-strong: #d2d6dd;
+  --color-border-focus: var(--color-accent);
+
+  /* ---------------------------------------------------------------------------
+     Text
+     ------------------------------------------------------------------------- */
+  --color-text-primary: #14171a;
+  --color-text-secondary: #596170;
+  --color-text-muted: #8b929e;
+  --color-text-inverse: #ffffff;
+  --color-text-on-accent: #ffffff;
+
+  /* ---------------------------------------------------------------------------
+     Accent — one colour, used for primary actions, focus and selection only.
+     Deliberately not used for task bars so that AI change colours stay legible.
+     ------------------------------------------------------------------------- */
+  --color-accent: #2f5fe0;
+  --color-accent-hover: #2850c4;
+  --color-accent-active: #2246ab;
+  --color-accent-soft: #eef2fe;
+  --color-accent-soft-hover: #e3eafd;
+  --color-accent-border: #c3d0f5;
+
+  /* ---------------------------------------------------------------------------
+     Semantic
+     ------------------------------------------------------------------------- */
+  --color-success: #0f7a5f;
+  --color-success-soft: #e7f5f0;
+  --color-success-border: #b3ddcd;
+
+  --color-warning: #b45309;
+  --color-warning-soft: #fdf4e4;
+  --color-warning-border: #ebd3a3;
+
+  --color-error: #c0392b;
+  --color-error-soft: #fdf0ee;
+  --color-error-border: #f0c4bd;
+
+  /* ---------------------------------------------------------------------------
+     AI change semantics
+     Three visually distinct hues. Never the only signal: every change type also
+     carries an icon marker, a bar treatment and a text label.
+
+       direct  «Изменено»    — the user asked for this. Amber = needs attention.
+       created «Новая»       — the AI added it. Teal = something gained.
+       derived «Пересчитано» — a consequence. Blue, lightest weight, quietest.
+     ------------------------------------------------------------------------- */
+  --color-change-direct: #b7791f;
+  --color-change-direct-bar: #e2a13a;
+  --color-change-direct-bar-hover: #d19229;
+  --color-change-direct-soft: #fdf4e4;
+  --color-change-direct-border: #e8cf9e;
+
+  --color-change-created: #0d7d64;
+  --color-change-created-bar: #21a98b;
+  --color-change-created-bar-hover: #18987b;
+  --color-change-created-soft: #e6f5f1;
+  --color-change-created-border: #a5dbcc;
+
+  --color-change-derived: #3e62c8;
+  --color-change-derived-bar: #94abe9;
+  --color-change-derived-bar-hover: #829ce3;
+  --color-change-derived-soft: #edf1fd;
+  --color-change-derived-border: #c6d3f6;
+
+  /* ---------------------------------------------------------------------------
+     Gantt chart
+     ------------------------------------------------------------------------- */
+  --color-bar: #b3bdcc;
+  --color-bar-hover: #9daabd;
+  --color-bar-milestone: #7c8798;
+  --color-bar-ghost: #b7bfcb;
+
+  --color-grid-line: #eef0f3;
+  --color-grid-week: #e0e4ea;
+  --color-grid-row-alt: #fafbfc;
+  --color-link: #b9c1cd;
+  --color-link-strong: #7c8798;
+
+  --gantt-row-height: 32px;
+  --gantt-day-width: 22px;
+  --gantt-bar-height: 16px;
+  --gantt-header-height: 54px;
+  --gantt-table-width: 428px;
+
+  /* ---------------------------------------------------------------------------
+     Typography
+     ------------------------------------------------------------------------- */
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'SF Mono', 'Cascadia Mono', 'JetBrains Mono', Consolas,
+    'Liberation Mono', monospace;
+
+  --text-page-title-size: 24px;
+  --text-page-title-line: 32px;
+  --text-page-title-weight: 600;
+  --text-page-title-tracking: -0.021em;
+
+  --text-section-title-size: 15px;
+  --text-section-title-line: 20px;
+  --text-section-title-weight: 600;
+  --text-section-title-tracking: -0.011em;
+
+  --text-body-size: 14px;
+  --text-body-line: 20px;
+
+  --text-small-size: 13px;
+  --text-small-line: 18px;
+
+  --text-table-size: 13px;
+  --text-table-line: 18px;
+
+  --text-label-size: 11px;
+  --text-label-line: 14px;
+  --text-label-weight: 600;
+  --text-label-tracking: 0.045em;
+
+  --text-micro-size: 10px;
+  --text-micro-line: 13px;
+
+  /* ---------------------------------------------------------------------------
+     Spacing — 2px base, restrained scale
+     ------------------------------------------------------------------------- */
+  --space-1: 2px;
+  --space-2: 4px;
+  --space-3: 6px;
+  --space-4: 8px;
+  --space-5: 10px;
+  --space-6: 12px;
+  --space-7: 16px;
+  --space-8: 20px;
+  --space-9: 24px;
+  --space-10: 32px;
+  --space-11: 40px;
+  --space-12: 48px;
+  --space-13: 64px;
+
+  /* ---------------------------------------------------------------------------
+     Radius — modest, B2B. Nothing above 12px except pills.
+     ------------------------------------------------------------------------- */
+  --radius-xs: 3px;
+  --radius-sm: 5px;
+  --radius-md: 7px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-pill: 999px;
+
+  /* ---------------------------------------------------------------------------
+     Elevation — minimal. Borders do the structural work; shadows only lift
+     things that genuinely float above the page.
+     ------------------------------------------------------------------------- */
+  --shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-sm: 0 1px 3px rgba(16, 24, 40, 0.07), 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-md: 0 6px 16px rgba(16, 24, 40, 0.09), 0 2px 5px rgba(16, 24, 40, 0.05);
+  --shadow-lg: 0 18px 48px rgba(16, 24, 40, 0.16), 0 4px 12px rgba(16, 24, 40, 0.07);
+
+  --ring-accent: 0 0 0 3px rgba(47, 95, 224, 0.16);
+  --ring-error: 0 0 0 3px rgba(192, 57, 43, 0.14);
+
+  /* ---------------------------------------------------------------------------
+     Layout
+     ------------------------------------------------------------------------- */
+  --app-header-height: 56px;
+  --chat-width: 28%;
+  --chat-min-width: 340px;
+  --chat-max-width: 460px;
+
+  /* ---------------------------------------------------------------------------
+     Motion — short and functional.
+     ------------------------------------------------------------------------- */
+  --ease-out: cubic-bezier(0.22, 0.68, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.5, 0, 0.2, 1);
+  --duration-fast: 90ms;
+  --duration-base: 150ms;
+  --duration-slow: 240ms;
+
+  --z-sticky: 10;
+  --z-tooltip: 60;
+  --z-dialog: 80;
+  --z-toast: 90;
+  --z-dev: 100;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 1ms;
+    --duration-base: 1ms;
+    --duration-slow: 1ms;
+  }
+}

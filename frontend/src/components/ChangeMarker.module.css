@@ -1,0 +1,27 @@
+.marker {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  flex: none;
+  border-radius: var(--radius-xs);
+  border: 1px solid;
+}
+
+.direct {
+  background: var(--color-change-direct-soft);
+  border-color: var(--color-change-direct-border);
+  color: var(--color-change-direct);
+}
+
+.created {
+  background: var(--color-change-created-soft);
+  border-color: var(--color-change-created-border);
+  color: var(--color-change-created);
+}
+
+.derived {
+  background: var(--color-change-derived-soft);
+  border-color: var(--color-change-derived-border);
+  color: var(--color-change-derived);
+}

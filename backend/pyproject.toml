@@ -1,0 +1,37 @@
+[project]
+name = "ai-gantt-planner-backend"
+version = "0.2.0"
+description = "Deterministic backend core + MCP/OpenRouter AI agent layer for AI Gantt Planner (import, scheduler, change sets, export, chat)."
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi==0.115.0",
+    "uvicorn[standard]==0.31.1",
+    # Bumped from 2.9.2 -> 2.11.9 and pinned starlette explicitly: the official
+    # MCP SDK (mcp==1.29.0) requires pydantic>=2.11.0. starlette is pinned to a
+    # version satisfying both fastapi==0.115.0's `<0.39,>=0.37.2` and mcp's
+    # `>=0.27`, instead of letting pip pick its own latest (which pulled in
+    # starlette 1.6.0 and broke fastapi on the first, unpinned install attempt).
+    # See docs/mcp-agent-architecture.md for the full story.
+    "pydantic==2.11.9",
+    "starlette==0.38.6",
+    "pydantic-settings==2.5.2",
+    "openpyxl==3.1.5",
+    "python-multipart==0.0.9",
+    "httpx==0.27.2",
+    "mcp==1.29.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==8.3.3",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["app*"]
