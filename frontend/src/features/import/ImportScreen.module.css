@@ -16,6 +16,10 @@
   max-width: 560px;
 }
 
+.notice {
+  width: 100%;
+}
+
 .wordmark {
   display: flex;
   align-items: center;

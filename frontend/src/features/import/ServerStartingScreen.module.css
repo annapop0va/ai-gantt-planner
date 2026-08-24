@@ -1,0 +1,51 @@
+.page {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-11) var(--space-8);
+  background: var(--color-background);
+}
+
+.card {
+  width: 100%;
+  max-width: 420px;
+  padding: var(--space-11) var(--space-10);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  text-align: center;
+}
+
+.spinner {
+  display: inline-flex;
+  color: var(--color-accent);
+  margin-bottom: var(--space-6);
+  animation: spin 1s linear infinite;
+}
+
+.title {
+  font-size: var(--text-section-title-size);
+  line-height: var(--text-section-title-line);
+  font-weight: var(--text-section-title-weight);
+  color: var(--color-text-primary);
+  margin-bottom: var(--space-2);
+}
+
+.subtitle {
+  font-size: var(--text-small-size);
+  color: var(--color-text-muted);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}

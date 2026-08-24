@@ -6,8 +6,12 @@ import { Button } from '@/components'
 
 export interface ImportErrorScreenProps {
   fileName: string
-  onChooseAnother: () => void
+  /** Omit to hide "Выбрать другой файл" — there is no file yet (e.g. the
+   * backend-unavailable cold-start case). */
+  onChooseAnother?: () => void
   onRetry: () => void
+  /** Overrides the default demo title — used for non-import failures (e.g. "Сервер пока недоступен"). */
+  title?: string
   /** Overrides the default demo copy — used for real server-mode failures. */
   message?: string
   /** Overrides the canned demo issues. Pass `[]` to hide the issue list entirely. */
@@ -20,6 +24,7 @@ export function ImportErrorScreen({
   fileName,
   onChooseAnother,
   onRetry,
+  title = 'Не удалось импортировать план',
   message,
   issues = DEMO_IMPORT_ISSUES,
   retryable = true,
@@ -32,7 +37,7 @@ export function ImportErrorScreen({
             <AlertTriangle size={18} />
           </span>
           <div className={styles.headText}>
-            <h1 className={styles.title}>Не удалось импортировать план</h1>
+            <h1 className={styles.title}>{title}</h1>
             <p className={styles.subtitle}>
               {message ?? (
                 <>
@@ -62,9 +67,11 @@ export function ImportErrorScreen({
         ) : null}
 
         <div className={styles.actions}>
-          <Button variant="secondary" size="lg" onClick={onChooseAnother}>
-            Выбрать другой файл
-          </Button>
+          {onChooseAnother ? (
+            <Button variant="secondary" size="lg" onClick={onChooseAnother}>
+              Выбрать другой файл
+            </Button>
+          ) : null}
           {retryable ? (
             <Button variant="primary" size="lg" onClick={onRetry}>
               Попробовать снова

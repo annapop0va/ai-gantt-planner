@@ -1,4 +1,4 @@
-export type Screen = 'import' | 'importLoading' | 'importError' | 'workspace'
+export type Screen = 'serverStarting' | 'import' | 'importLoading' | 'importError' | 'workspace'
 
 export type ExportStatus = 'idle' | 'preparing' | 'done'
 

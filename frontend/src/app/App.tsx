@@ -7,6 +7,7 @@ import type { DevState, ExportStatus, Screen } from './types'
 import { ImportErrorScreen } from '@/features/import/ImportErrorScreen'
 import { ImportLoadingScreen } from '@/features/import/ImportLoadingScreen'
 import { ImportScreen } from '@/features/import/ImportScreen'
+import { ServerStartingScreen } from '@/features/import/ServerStartingScreen'
 import { looksInvalid } from '@/features/import/scenarios'
 import type { ImportIssue } from '@/features/import/scenarios'
 import {
@@ -22,8 +23,10 @@ import { TaskDetailsModal } from '@/features/task-modal/TaskDetailsModal'
 import type { SelectedFile } from '@/components'
 import { ApiError, triggerBlobDownload } from '@/api/client'
 import { sendChatMessage } from '@/api/chat'
+import { checkHealth } from '@/api/health'
 import { exportProject, getProject, importProject } from '@/api/projects'
 import { adaptServerChangeSummary } from './serverChangeSummaryAdapter'
+import { waitForBackend } from '@/lib/backendAvailability'
 import { computeChangeSet } from '@/lib/diff'
 import { projectAfter, projectBefore } from '@/fixtures'
 import type { ChangeSet, Project } from '@/types/project'
@@ -41,8 +44,14 @@ const DEFAULT_START_DATE = '2026-09-07'
 const PROJECT_ID_STORAGE_KEY = 'planpilot.project_id'
 const CHAT_DISABLED_REPLY = 'AI-редактирование будет подключено на следующем этапе.'
 const EXPORT_FAILED_REPLY = 'Не удалось подготовить Excel-файл. Сервис недоступен.'
-const RESTORE_FAILED_MESSAGE =
-  'Проект хранился только в памяти сервера и исчез после его перезапуска (или сервер сейчас недоступен). Загрузите файл ещё раз.'
+/** In-memory MVP: a project_id surviving in sessionStorage can outlive the
+ * backend process that created it (free-tier restart/spin-down). */
+const STALE_SESSION_MESSAGE = 'Сессия проекта завершилась после перезапуска сервера. Загрузите Excel ещё раз.'
+const BACKEND_UNAVAILABLE_TITLE = 'Сервер пока недоступен'
+const BACKEND_UNAVAILABLE_MESSAGE = 'Не удалось подключиться к серверу. Попробуйте ещё раз.'
+/** Per-attempt health-check timeout. Kept well under the ~90s total cold-start
+ * budget (@/lib/backendAvailability) so several attempts fit within it. */
+const HEALTH_CHECK_TIMEOUT_MS = 10_000
 
 function uid(): string {
   return crypto.randomUUID()
@@ -66,9 +75,14 @@ interface PendingRequest {
 }
 
 interface ImportErrorState {
+  title?: string
   message?: string
   issues?: ImportIssue[]
   retryable: boolean
+  /** 'backendUnavailable' drives the cold-start Retry (re-runs the health
+   * check from scratch) instead of the file-import Retry, and hides
+   * "Выбрать другой файл" — there is no file involved yet. */
+  kind?: 'import' | 'backendUnavailable'
 }
 
 function toImportIssues(details: unknown[]): ImportIssue[] {
@@ -83,10 +97,22 @@ function toImportIssues(details: unknown[]): ImportIssue[] {
 }
 
 export function App() {
-  const [screen, setScreen] = useState<Screen>('import')
+  // Cold-start gate runs first for every real (non-mock) app open — see the
+  // boot effect below. DevStateSwitcher jumps override this immediately
+  // regardless of where the health check currently stands.
+  const [screen, setScreen] = useState<Screen>('serverStarting')
+  const screenRef = useRef<Screen>(screen)
+  screenRef.current = screen
   const [pendingFile, setPendingFile] = useState<SelectedFile | null>(null)
   const [pendingStartDate, setPendingStartDate] = useState(DEFAULT_START_DATE)
   const [importErrorState, setImportErrorState] = useState<ImportErrorState | null>(null)
+  /** A calm one-off message shown on the Import screen (e.g. stale session
+   * after a server restart) — distinct from importErrorState, which drives
+   * the full-page error screen. */
+  const [importNotice, setImportNotice] = useState<string | null>(null)
+  /** Bumped to force the boot effect (health-check + optional restore) to
+   * run again from "Попробовать снова" on the backend-unavailable screen. */
+  const [backendCheckRetryToken, setBackendCheckRetryToken] = useState(0)
   const pendingRequestRef = useRef<PendingRequest | null>(null)
 
   /** 'mock' drives the fixture-based demo (DevStateSwitcher, canned chat). 'server'
@@ -112,13 +138,74 @@ export function App() {
   const project = dataSource === 'server' && serverProject ? serverProject : projectVersion === 'after' ? projectAfter : projectBefore
   const changeSet = dataSource === 'server' ? serverChangeSet : projectVersion === 'after' ? CANONICAL_CHANGE_SET : null
 
-  // Restore a server-mode project after a page reload — the project itself lives
-  // only in the backend's in-memory store, so only the id is kept client-side.
+  /**
+   * Cold-start gate + restore, in one sequence, every time the app opens
+   * (and again on "Попробовать снова" from the backend-unavailable screen,
+   * via backendCheckRetryToken): first prove the backend answers health at
+   * all — a free Render service can take up to ~a minute to wake up — then,
+   * only if it does, attempt to restore a project from a previous session.
+   * The `screenRef` checks make each step a no-op if the user has since
+   * navigated away (e.g. a DevStateSwitcher jump into a mock state) so this
+   * never clobbers an unrelated screen the user is already looking at.
+   */
   useEffect(() => {
-    const savedId = sessionStorage.getItem(PROJECT_ID_STORAGE_KEY)
-    if (!savedId) return
-    setScreen('importLoading')
-    pendingRequestRef.current = trackPending('restore', getProject(savedId))
+    let cancelled = false
+
+    async function boot() {
+      setImportNotice(null)
+      setScreen('serverStarting')
+
+      const result = await waitForBackend({ checkHealth: () => checkHealth(HEALTH_CHECK_TIMEOUT_MS) })
+      if (cancelled || screenRef.current !== 'serverStarting') return
+
+      if (result === 'unavailable') {
+        setImportErrorState({
+          title: BACKEND_UNAVAILABLE_TITLE,
+          message: BACKEND_UNAVAILABLE_MESSAGE,
+          issues: [],
+          retryable: true,
+          kind: 'backendUnavailable',
+        })
+        setScreen('importError')
+        return
+      }
+
+      // Restore a server-mode project after a page reload — the project
+      // itself lives only in the backend's in-memory store, so only the id
+      // is kept client-side.
+      const savedId = sessionStorage.getItem(PROJECT_ID_STORAGE_KEY)
+      if (!savedId) {
+        setScreen('import')
+        return
+      }
+      pendingRequestRef.current = trackPending('restore', getProject(savedId))
+      setScreen('importLoading')
+    }
+
+    boot()
+    return () => {
+      cancelled = true
+    }
+  }, [backendCheckRetryToken])
+
+  // Requirement: no background keep-alive polling. This only fires on a real
+  // visibility change (the user returning to an already-open tab) and makes
+  // a single best-effort read-only request — its result is intentionally
+  // ignored, it just gives a sleeping backend a head start before the user's
+  // next real action.
+  useEffect(() => {
+    function onVisibilityChange() {
+      if (document.visibilityState === 'visible' && dataSource === 'server') {
+        checkHealth(HEALTH_CHECK_TIMEOUT_MS).catch(() => {})
+      }
+    }
+    document.addEventListener('visibilitychange', onVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', onVisibilityChange)
+  }, [dataSource])
+
+  const handleRetryBackendCheck = useCallback(() => {
+    setImportErrorState(null)
+    setBackendCheckRetryToken((token) => token + 1)
   }, [])
 
   const resetToImport = useCallback(() => {
@@ -126,6 +213,7 @@ export function App() {
     setScreen('import')
     setPendingFile(null)
     setImportErrorState(null)
+    setImportNotice(null)
     setDataSource('mock')
     setServerProject(null)
     setServerChangeSet(null)
@@ -143,6 +231,7 @@ export function App() {
   const handleBuildPlan = useCallback((file: SelectedFile, startDate: string) => {
     setPendingFile(file)
     setPendingStartDate(startDate)
+    setImportNotice(null)
     setScreen('importLoading')
     pendingRequestRef.current = file.raw
       ? trackPending('import', importProject(file.raw, startDate).then((r) => r.project))
@@ -170,7 +259,24 @@ export function App() {
       } catch (err) {
         if (pending.kind === 'restore') {
           sessionStorage.removeItem(PROJECT_ID_STORAGE_KEY)
-          setImportErrorState({ message: RESTORE_FAILED_MESSAGE, issues: [], retryable: false })
+          // In-memory MVP: the saved project_id can simply no longer exist
+          // after a backend restart/spin-down. That is an expected outcome,
+          // not a technical error — send the user back to a plain Import
+          // screen with a calm explanation instead of the error screen, and
+          // never surface the raw 404/PROJECT_NOT_FOUND.
+          const isStaleProject = err instanceof ApiError && (err.status === 404 || err.code === 'PROJECT_NOT_FOUND')
+          if (isStaleProject) {
+            setScreen('import')
+            setImportNotice(STALE_SESSION_MESSAGE)
+            return
+          }
+          setImportErrorState({
+            title: BACKEND_UNAVAILABLE_TITLE,
+            message: BACKEND_UNAVAILABLE_MESSAGE,
+            issues: [],
+            retryable: true,
+            kind: 'backendUnavailable',
+          })
         } else {
           const apiError =
             err instanceof ApiError ? err : new ApiError(0, { code: 'UNKNOWN_ERROR', message: 'Не удалось импортировать файл.' })
@@ -414,6 +520,8 @@ export function App() {
       setServerProject(null)
       setServerChangeSet(null)
       setProjectId(null)
+      setImportErrorState(null)
+      setImportNotice(null)
 
       switch (state) {
         case 'import':
@@ -531,17 +639,22 @@ export function App() {
     [resetToImport, runMockAiTurn],
   )
 
+  const importErrorIsBackendUnavailable = importErrorState?.kind === 'backendUnavailable'
+
   return (
     <div className={styles.root}>
-      {screen === 'import' ? <ImportScreen onBuildPlan={handleBuildPlan} /> : null}
+      {screen === 'serverStarting' ? <ServerStartingScreen /> : null}
+
+      {screen === 'import' ? <ImportScreen onBuildPlan={handleBuildPlan} notice={importNotice} /> : null}
 
       {screen === 'importLoading' ? <ImportLoadingScreen onDone={handleImportDone} /> : null}
 
       {screen === 'importError' ? (
         <ImportErrorScreen
           fileName={pendingFile?.name ?? 'project.xlsx'}
-          onChooseAnother={handleChooseAnotherFile}
-          onRetry={handleRetryImport}
+          title={importErrorState?.title}
+          onChooseAnother={importErrorIsBackendUnavailable ? undefined : handleChooseAnotherFile}
+          onRetry={importErrorIsBackendUnavailable ? handleRetryBackendCheck : handleRetryImport}
           message={importErrorState?.message}
           issues={importErrorState?.issues}
           retryable={importErrorState?.retryable ?? true}

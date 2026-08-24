@@ -2,22 +2,31 @@ import { useState } from 'react'
 import { ChartGantt, Download } from 'lucide-react'
 import styles from './ImportScreen.module.css'
 import { REQUIRED_COLUMNS } from './scenarios'
-import { Button, DateInput, Dropzone } from '@/components'
+import { Alert, Button, DateInput, Dropzone } from '@/components'
 import type { SelectedFile } from '@/components'
 
 export interface ImportScreenProps {
   onBuildPlan: (file: SelectedFile, startDate: string) => void
+  /** A calm, one-off informational message shown above the card — e.g. after
+   * an in-memory server session was lost to a restart. Not an error state. */
+  notice?: string | null
 }
 
 const DEFAULT_START_DATE = '2026-09-07'
 
-export function ImportScreen({ onBuildPlan }: ImportScreenProps) {
+export function ImportScreen({ onBuildPlan, notice }: ImportScreenProps) {
   const [file, setFile] = useState<SelectedFile | null>(null)
   const [startDate, setStartDate] = useState(DEFAULT_START_DATE)
 
   return (
     <div className={styles.page}>
       <div className={styles.wrap}>
+        {notice ? (
+          <Alert tone="info" className={styles.notice}>
+            {notice}
+          </Alert>
+        ) : null}
+
         <div className={styles.wordmark}>
           <span className={styles.wordmarkGlyph} aria-hidden>
             <ChartGantt size={16} />
